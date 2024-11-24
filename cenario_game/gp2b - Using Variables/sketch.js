@@ -6,28 +6,23 @@ The Game Project
 
 */
 
-
 var floorPos_y;
 
 var gameChar_x;
 var gameChar_y;
 
-var treePos_x;
-var treePos_y;
+var Canyon;
+var Collectable;
 
-var canyon;
-var collectable;
+var MountainOne;
+var MountainTwo;
 
-var mountain;
+var CloudTwo;
+var CloudOne;
 
-var cloudX = 67;
-var cloudY = 81;
-var speed= 20;
+var Tree;
 
-var cloud2X= 275;
-var cloud2Y = 114;
-var cloud2Speed= 10;
-
+var TreeTop;
 
 function setup()
 {
@@ -38,114 +33,127 @@ function setup()
 	gameChar_x = width/2;
 	gameChar_y = floorPos_y;
 
-	treePos_x = width/2;
-	treePos_y = height/2;
+	CloudOne = {
+	cloudX : 67,
+	cloudY : 81,
+	speed : 2
+	}
+
+	CloudTwo = {
+	cloudX : 275,
+	cloudY : 114,
+	speed : 1
+	}
+
+	MountainOne = {
+	mountain_x1 : 321,
+	mountain_y1 : 432,
+	mountain_x2 : 380,
+	mountain_y2 : 232,
+	mountain_x3 : 530,
+	mountain_y3 : 430
+	}
+
+	MountainTwo = {
+	mountain_x1 : 554,
+	mountain_y1 : 432,
+	mountain_x2 : 400,
+	mountain_y2 : 294,
+	mountain_x3 : 360,
+	mountain_y3 : 430
+	}
+
+    Tree = {
+    tree_x : 160,
+    tree_y : 431,
+    tree_w : 40,
+    tree_h : -150
+    }
+
+    TreeTop = {
+    treeTop_x : 100,
+    treeTop_y : 100,
+    treeTop_w : 50,
+    treeTop_h : 40
+    }
+
+    Collectable = {
+    collectableBody_x : 224,
+    collectableBody_y : 418,
+    collectableBody_w : 15,
+    collectableBody_h : 15,
+
+    collectableLine_x : 223,
+    collectableLine_y : 412,
+    collectableLine_w : 223,
+    collectableLine_h : 426
+    }
+
+    Canyon = {
+    canyon_x : 100,
+    canyon_y : 400,
+    canyon_w : 30,
+    canyon_h : 100
+    }
 }
 
 function draw()
 {
-	//------>>>>> CEU <<<<<----------
 
-	function drawCloud(cloudX, cloudY){
-		noStroke();
-		fill(200, 0, 0)
-		ellipse(cloudX +30, cloudY, 40, 40);
-		ellipse(cloudX, cloudY, 50, 30);
-		ellipse(cloudX +50, cloudY -5, 60, 25);
-	}
-
-	function drawCloud2(cloudX, cloudY){
-		noStroke();
-		fill(200, 0, 0)
-		ellipse(cloudX +30, cloudY, 40, 40);
-		ellipse(cloudX, cloudY, 50, 30);
-		ellipse(cloudX +50, cloudY -5, 60, 25);
-	}
-
-
-	background(100, 155, 255); //fill the sky blue
-
+//------>>>>> Sky Gradient <<<<<------
 	colorMode(RGB, 255);
 
-	for (let y = 0; y < 576; y += 1) { // Varre verticalmente
-		let t = map(y, 0, 576, 0, 1); // Gradiente vertical
-		let r = lerp(20, 255, t);     // Vermelho: baixo -> forte
-		let g = lerp(60, 150, t);     // Verde: meio tom
-		let b = lerp(255, 100, t);    // Azul: forte -> fraco
-
-		for (let x = 0; x < 1034; x += 1) { // Varre horizontalmente
-			stroke(r, g, b); // Mistura de cores
-			point(x, y);
-		}
+	for(let y = 0; y < 576; y++){
+	    for(let x = 0; x < 1034; x++){
+	    let t = map(y, 0, 576, 0, 1);
+	    let r = lerp(20, 255, t) + random(-10, 20);
+	    let g = lerp(60, 150, t) + random(-10, 20);
+	    let b = lerp(255, 100, t) + random(-10, 20);
+	    stroke(r, g, b);
+	    point(x, y);
+	    }
 	}
 
-	drawCloud(cloudX, cloudY)
-	drawCloud2(cloud2X , cloud2Y);
+//------>>>>> Cloud Methods <<<<<------
+	drawCloud(CloudOne)
+	CloudOne.cloudX += CloudOne.speed
+	if(CloudOne.cloudX > width){ //Set cloud to start of the screen when it hits the end
+		CloudOne.cloudX = -100;
+	};
 
-	cloudX += speed
+	drawCloud(CloudTwo);
+	CloudTwo.cloudX += CloudTwo.speed
+    if(CloudTwo.cloudX > width){ //Set cloud to start of the screen when it hits the end
+		CloudTwo.cloudX = -100;
+	};
 
-	cloud2X += cloud2Speed
-
-	if(cloudX > width){
-		cloudX = -100;
-	}
-
-	if(cloud2X > width){
-		cloud2X = -100;
-	}
-
-	//------>>>>> CHAO <<<<<----------
-	stroke( 0);
+//------>>>>> Floor <<<<<----------
+	stroke(0);
 	fill(155, 255, 155);
 	rect(0, floorPos_y, height, width - floorPos_y); //draw some green ground
 
+//------>>>>> Mountains <<<<<----------
 	fill(128,0,0)
-	triangle(321, 432, 380, 232, 530, 430)
+	drawMountain(MountainOne);
 	fill(100, 0, 0)
-	triangle(554, 432, 400, 294, 360, 430)
+	drawMountain(MountainTwo);
 
-
-
-	//------>>>>> ARVORE <<<<<----------
+//------>>>>> Tree <<<<<----------
 	fill(102, 51, 0);
-	rect(treePos_x-370, treePos_y + 145, 40, -150)
+	rect(Tree.tree_x,
+	Tree.tree_y,
+	Tree.tree_w,
+	Tree.tree_h)
 
-	fill(0, 60, 0)
-	ellipse(170, 250,120, 100)
-	//fill(0, 106, 0)
-	ellipse(132, 276, 100, 100);
-	//fill(0, 70, 0)
-	ellipse(105, 214, 80, 80);
-	//fill(0, 90, 0)
-	ellipse(182, 193, 90, 60);
-	//fill(0, 57, 0)
-	ellipse(238, 222, 50, 80);
-	//fill(0, 98, 0)
-	ellipse(236, 278, 60, 40);
-	//fill(0, 106, 0)
-	ellipse(206, 307, 70, 40)
+    drawTreeTop(TreeTop);
 
-	//TODO:ITEM
-	fill(255, 204, 0)
-	stroke(0)
-	ellipse(224, 418, 15, 15)
-	line(223, 412, 223, 426);
-	line(217, 419, 230, 417);
+//------>>>>> Collectable <<<<<----------
+    drawCollectable(Collectable);
 
-	stroke(0)
-	ellipse(244, 418, 15, 15)
-	line(238, 412, 250, 420);
-	line(249, 412, 238, 422);
+//------>>>>> Canyon <<<<<----------
+    drawCanyon(Canyon);
 
-	//TODO:CANYON
-	stroke(0);
-	fill(0)
-	rect(70, 433, 30, 90);
-	rect(100, 493, 30, 200);
-	rect(130, 547, 470, 30);
-
-
-	//------>>>>> PERSONAGEM <<<<<----------
+//------>>>>> Character <<<<<----------
 	//front foot
 	fill(123, 104, 35);
 	rect(gameChar_x + 5, gameChar_y - 10, 5, 10);
@@ -154,24 +162,143 @@ function draw()
 
 	//body
 	fill(82, 97, 38)
-	ellipse(gameChar_x, gameChar_y - 15, 25, 20)
+	ellipse(gameChar_x, gameChar_y - 15, 25, 20);
 
 	//head
 	fill(123, 104, 35)
 	ellipse(gameChar_x + 1, gameChar_y - 13, 10, 10);
 	//eyes
 	fill(0);
-	ellipse(gameChar_x - 2, gameChar_y - 13, 2, 2)
-	ellipse(gameChar_x + 4, gameChar_y - 13, 2, 2)
-
-	push();
-	noStroke();
-	fill(0, 255, 0);
-	text(mouseX + ", " + mouseY, mouseX, mouseY);
-	pop();
+	ellipse(gameChar_x - 2, gameChar_y - 13, 2, 2);
+	ellipse(gameChar_x + 4, gameChar_y - 13, 2, 2);
 }
 
 
+function drawCloud(cloudObject){
+    fill(200, 0 ,0);
+    noStroke();
+	ellipse(cloudObject.cloudX +30, cloudObject.cloudY, 40, 40);
+	ellipse(cloudObject.cloudX, cloudObject.cloudY, 50, 30);
+	ellipse(cloudObject.cloudX +50, cloudObject.cloudY -5, 60, 25);
+};
+
+function drawMountain(mountainObject) {
+	triangle(
+	 mountainObject.mountain_x1,
+	 mountainObject.mountain_y1,
+	 mountainObject.mountain_x2,
+	 mountainObject.mountain_y2,
+	 mountainObject.mountain_x3,
+	 mountainObject.mountain_y3)
+};
+
+function drawTreeTop(treeTopObject) {
+    fill(0, 60, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 70,
+	treeTopObject.treeTop_y + 150,
+	treeTopObject.treeTop_w + 70,
+	treeTopObject.treeTop_h + 60)
+	fill(0, 106, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 32,
+	treeTopObject.treeTop_y + 176,
+	treeTopObject.treeTop_w + 50,
+	treeTopObject.treeTop_h + 60)
+	fill(0, 70, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 5,
+	treeTopObject.treeTop_y + 114,
+	treeTopObject.treeTop_w + 30,
+	treeTopObject.treeTop_h + 40)
+	fill(0, 90, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 82,
+	treeTopObject.treeTop_y + 93,
+	treeTopObject.treeTop_w + 40,
+	treeTopObject.treeTop_h + 20)
+	fill(0, 57, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 138,
+	treeTopObject.treeTop_y + 122,
+	treeTopObject.treeTop_w,
+	treeTopObject.treeTop_h + 40)
+	fill(0, 98, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 136,
+	treeTopObject.treeTop_y + 178,
+	treeTopObject.treeTop_w + 10,
+	treeTopObject.treeTop_h)
+	fill(0, 106, 0)
+	ellipse(
+	treeTopObject.treeTop_x + 106,
+	treeTopObject.treeTop_y + 107,
+	treeTopObject.treeTop_w + 20,
+	treeTopObject.treeTop_h)
+};
+
+function drawCollectable(collectableObject){
+
+    fill(255, 204, 0)
+	stroke(0)
+
+	ellipse(
+	 collectableObject.collectableBody_x,
+	 collectableObject.collectableBody_y,
+	 collectableObject.collectableBody_w,
+	 collectableObject.collectableBody_h);
+
+	line(collectableObject.collectableLine_x,
+	collectableObject.collectableLine_y,
+	collectableObject.collectableLine_w,
+	collectableObject.collectableLine_h);
+
+	line(collectableObject.collectableLine_x - 6,
+	collectableObject.collectableLine_y + 7,
+	collectableObject.collectableLine_w + 7,
+	collectableObject.collectableLine_h - 9);
+
+	ellipse(
+	 collectableObject.collectableBody_x + 20,
+	 collectableObject.collectableBody_y,
+	 collectableObject.collectableBody_w,
+	 collectableObject.collectableBody_h);
+
+	line(collectableObject.collectableLine_x + 15,
+	collectableObject.collectableLine_y,
+	collectableObject.collectableLine_w + 27,
+	collectableObject.collectableLine_h - 6);
+
+	line(collectableObject.collectableLine_x + 26,
+	collectableObject.collectableLine_y,
+	collectableObject.collectableLine_w + 15,
+	collectableObject.collectableLine_h - 4);
+
+};
+
+function drawCanyon(canyonObject){
+    stroke(0);
+	fill(0)
+
+	rect(
+	canyonObject.canyon_x - 30,
+	canyonObject.canyon_y + 33,
+	canyonObject.canyon_w,
+	canyonObject.canyon_h - 10);
+
+	rect(
+	canyonObject.canyon_x,
+	canyonObject.canyon_y + 93,
+	canyonObject.canyon_w,
+	canyonObject.canyon_h + 100);
+
+	rect(
+	canyonObject.canyon_x + 30,
+	canyonObject.canyon_y + 147,
+	canyonObject.canyon_w + 440,
+	canyonObject.canyon_h - 70);
+
+};
 
 function mousePressed()
 {
